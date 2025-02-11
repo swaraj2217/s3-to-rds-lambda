@@ -4,14 +4,14 @@ provider "aws" {
 
 # S3 Bucket
 resource "aws_s3_bucket" "data_bucket" {
-  bucket = "mys3buck22"
-  force_destroy = true  # Allow Terraform to delete the bucket if needed
+  bucket        = "mys3buck22"
+  force_destroy = true  # Allow Terraform to delete the bucket
 }
 
 # ECR Repository
 resource "aws_ecr_repository" "lambda_repo" {
-  name = "lambda-ecr-repo"
-  force_delete = true  # Allow Terraform to delete the repository if needed
+  name          = "lambda-ecr-repo"
+  force_delete  = true  # Allow Terraform to delete the repository
 }
 
 # IAM Role for Lambda

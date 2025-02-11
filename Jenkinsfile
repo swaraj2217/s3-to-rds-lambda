@@ -4,7 +4,7 @@ pipeline {
     environment {
         AWS_ACCESS_KEY_ID     = credentials('AWS_ACCESS_KEY_ID')
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
-        AWS_DEFAULT_REGION    = 'us-east-1'  // Add this line
+        AWS_DEFAULT_REGION    = 'us-east-1'  // Specify the AWS region
     }
     
     stages {
@@ -30,6 +30,15 @@ pipeline {
                 sh 'terraform -chdir=terraform init'
                 sh 'terraform -chdir=terraform apply -auto-approve'
             }
+        }
+    }
+    
+    post {
+        failure {
+            echo "Pipeline failed! Check the logs for errors."
+        }
+        success {
+            echo "Pipeline succeeded! Resources deployed successfully."
         }
     }
 }
