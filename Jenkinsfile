@@ -14,6 +14,13 @@ pipeline {
             }
         }
         
+        stage('Terraform Apply') {
+            steps {
+                sh 'terraform -chdir=terraform init'
+                sh 'terraform -chdir=terraform apply -auto-approve'
+            }
+        }
+        
         stage('Push to ECR') {
             steps {
                 script {
@@ -22,13 +29,6 @@ pipeline {
                     sh "docker tag lambda-image ${ecr_repo}:latest"
                     sh "docker push ${ecr_repo}:latest"
                 }
-            }
-        }
-        
-        stage('Terraform Apply') {
-            steps {
-                sh 'terraform -chdir=terraform init'
-                sh 'terraform -chdir=terraform apply -auto-approve'
             }
         }
     }
