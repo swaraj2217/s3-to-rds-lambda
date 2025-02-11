@@ -5,11 +5,12 @@ provider "aws" {
 # S3 Bucket
 resource "aws_s3_bucket" "data_bucket" {
   bucket = "mys3buck22"
+  force_destroy = true  
 }
-
 # ECR Repository
 resource "aws_ecr_repository" "lambda_repo" {
   name = "lambda-ecr-repo"
+  force_delete = true
 }
 
 # IAM Role for Lambda
@@ -27,12 +28,21 @@ resource "aws_iam_role" "lambda_role" {
     }]
   })
   
-  managed_policy_arns = [
-    "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess",
-    "arn:aws:iam::aws:policy/AmazonRDSDataFullAccess",
-    "arn:aws:iam::aws:policy/AWSGlueConsoleFullAccess"
-  ]
+  resource "aws_iam_role_policy_attachment" "s3_access" {
+  role       = aws_iam_role.lambda_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
 }
+
+resource "aws_iam_role_policy_attachment" "rds_access" {
+  role       = aws_iam_role.lambda_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonRDSDataFullAccess"
+}
+
+resource "aws_iam_role_policy_attachment" "glue_access" {
+  role       = aws_iam_role.lambda_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AWSGlueConsoleFullAccess"
+}
+
 
 # Lambda Function
 resource "aws_lambda_function" "data_processor" {
