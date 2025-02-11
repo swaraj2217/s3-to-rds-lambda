@@ -5,12 +5,13 @@ provider "aws" {
 # S3 Bucket
 resource "aws_s3_bucket" "data_bucket" {
   bucket = "mys3buck22"
-  force_destroy = true  
+  force_destroy = true  # Allow Terraform to delete the bucket if needed
 }
+
 # ECR Repository
 resource "aws_ecr_repository" "lambda_repo" {
   name = "lambda-ecr-repo"
-  force_delete = true
+  force_delete = true  # Allow Terraform to delete the repository if needed
 }
 
 # IAM Role for Lambda
@@ -27,8 +28,10 @@ resource "aws_iam_role" "lambda_role" {
       }
     }]
   })
-  
-  resource "aws_iam_role_policy_attachment" "s3_access" {
+}
+
+# Attach IAM Policies to the Role
+resource "aws_iam_role_policy_attachment" "s3_access" {
   role       = aws_iam_role.lambda_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
 }
@@ -42,7 +45,6 @@ resource "aws_iam_role_policy_attachment" "glue_access" {
   role       = aws_iam_role.lambda_role.name
   policy_arn = "arn:aws:iam::aws:policy/AWSGlueConsoleFullAccess"
 }
-
 
 # Lambda Function
 resource "aws_lambda_function" "data_processor" {
